@@ -26,11 +26,20 @@ jack_w = 6.4;
 jack_labels = ["MIDI IN", "MIDI OUT", "CLOCK", "OUT1", "OUT2"];
 
 enc_h = 7.0;           // EC12E 本体の高さ（基板表面から、余裕込み）
-enc_hole_d = 7.2;      // シャフト穴（ノブの径に合わせて）
+enc_hole_d = 7.6;      // シャフト穴（軸受けØ7 + 余裕。ノブの径に合わせて）
+enc_body = 12.4;       // エンコーダ本体の一辺（干渉確認用）
+enc_body_h = 6.5;      // エンコーダ本体の高さ（EC11の値。EC12Eはこれより低い）
 led_d = 1.8;           // D1 は裏面。ベース底に導光穴を開ける
 hdr_z1 = pcb_t + 5.6;  // EXTヘッダー（L字）の通り穴の高さ
 
 post = 2.4;            // 基板を受ける角の柱
+
+// 上下を留めるツメ（左右の壁に2か所ずつ）。ベースのリップに出っ張り、トップの壁に窓
+snap_y = [7, 24];      // ツメの位置（基板下辺から）
+snap_len = 6;          // ツメの長さ
+snap_p = 0.5;          // 出っ張り量（かかり代は snap_p - 0.15）
+snap_z0 = 1.0;         // 出っ張りの下端（= トップ側の帯の高さ）
+snap_gap = 0.15;       // リップと受けのすき間
 
 // ---------- 導出値 ----------
 ox0 = -clr - wall; oy0 = -clr - wall;
@@ -46,6 +55,25 @@ $fn = 48;
 module rbox(x, y, z, w, h, d, r = 1.5) {
     translate([x, y, z]) linear_extrude(d)
         offset(r) offset(-r) square([w, h]);
+}
+
+// ツメの出っ張り。dir = -1 で左壁（-X向き）、+1 で右壁
+module snap_bumps() {
+    for (dir = [-1, 1], y = snap_y) {
+        xf = (dir < 0) ? ox0 + wall / 2 : ox0 + ow - wall / 2;
+        translate([xf, y + snap_len / 2, 0]) rotate([90, 0, 0]) linear_extrude(snap_len)
+            polygon([[-dir * 0.3, snap_z0], [0, snap_z0], [dir * snap_p, snap_z0 + snap_p],
+                     [dir * snap_p, snap_z0 + snap_p + 0.2], [0, snap_z0 + snap_p + 1.4],
+                     [-dir * 0.3, snap_z0 + snap_p + 1.4]]);
+    }
+}
+// ツメが入る窓（トップの壁を貫通）
+module snap_windows() {
+    w = wall / 2 - snap_gap + 0.2;
+    for (y = snap_y) {
+        translate([ox0 - 0.1, y - snap_len / 2 - 0.3, snap_z0]) cube([w, snap_len + 0.6, pcb_t + lip_h + 0.2 - snap_z0]);
+        translate([ox0 + ow + 0.1 - w, y - snap_len / 2 - 0.3, snap_z0]) cube([w, snap_len + 0.6, pcb_t + lip_h + 0.2 - snap_z0]);
+    }
 }
 
 module base() {
@@ -64,6 +92,7 @@ module base() {
                 rbox(ox0 + wall / 2, oy0 + wall / 2, 0, ow - wall, oh - wall, pcb_t + lip_h, 1.2);
                 translate([-clr, -clr, -1]) cube([pcb_w + 2 * clr, cav_h, 10]);
             }
+            snap_bumps();
         }
         // ジャックの穴（上辺）
         for (x = jack_x)
@@ -86,6 +115,7 @@ module top() {
         rbox(-clr, -clr, -1, pcb_w + 2 * clr, cav_h, top_z1 - floor_t + 1, 0.5);
         // ベース側リップの受け
         rbox(ox0 + wall / 2 - 0.15, oy0 + wall / 2 - 0.15, -0.01, ow - wall + 0.3, oh - wall + 0.3, pcb_t + lip_h + 0.2, 1.2);
+        snap_windows();
         // ノブの穴
         for (x = enc_x) translate([x, enc_y, 0]) cylinder(d = enc_hole_d, h = 50);
         // ジャック穴（上辺、カバー側の半分）
@@ -109,6 +139,10 @@ module top() {
 module pcb_dummy() {
     color("green", 0.6) cube([pcb_w, pcb_h, pcb_t]);
     for (x = enc_x) color("silver") translate([x, enc_y, pcb_t]) cylinder(d = 6, h = 20);
+    for (x = enc_x) color("orange") {
+        translate([x - enc_body / 2, enc_y - enc_body / 2, pcb_t]) cube([enc_body, enc_body, enc_body_h]);
+        translate([x, enc_y, pcb_t]) cylinder(d = 7, h = enc_body_h + 5);
+    }
     for (x = jack_x) color("black")
         translate([x - jack_w / 2, pcb_h + 1.4 - jack_len, -jack_h]) cube([jack_w, jack_len, jack_h]);
 }

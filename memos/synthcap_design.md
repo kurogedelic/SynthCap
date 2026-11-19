@@ -73,3 +73,9 @@ openscad -D 'part="base"' / 'part="top"'    # shell/synthcap_shell.scad
 - `-mt 0` は最適化なし。最適化ありだと15分たっても終わらなかった
 - GNDベタはSMDパッドに直結、スルーホールだけサーマル
 - 配線前の基板は SynthCap-backups/SynthCap_unrouted_80x32.kicad_pcb
+
+## シェルのツメ（2026-11-19）
+- 上下の固定: ベースのリップ外面に出っ張り（0.5mm、下面45°、上面は斜面）、トップの壁に貫通窓。左右の壁に2か所ずつ（基板下辺から7mmと24mm、長さ6mm）
+- かかり代は約0.35mm、上下の遊びは約0.1mm。下面が45°なので、こじれば外せる
+- きつい/ゆるい場合は shell/synthcap_shell.scad の snap_p（出っ張り量）を0.1mm単位で調整
+- シャフト穴は7.6mmに拡大。断面は docs/shell_snap_section.png
