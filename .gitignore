@@ -1,0 +1,14 @@
+.DS_Store
+*.kicad_prl
+*.lck
+*-bak
+*~
+_autosave-*
+fp-info-cache
+~$*
+__pycache__/
+*.pyc
+SynthCap-backups/*.zip
+# third-party files, not redistributed
+docs/PJ-342_datasheet_C668606.pdf
+SynthCap.3dshapes/*.STEP
