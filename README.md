@@ -46,3 +46,9 @@ A MIDI / CV interface "Cap" for the M5Stack CardputerZero. It plugs into the EXT
 
 ## Warning
 `tools/gen_pcb.py` rebuilds the board from scratch and removes all routing. Do not run it on a routed board.
+
+## License
+Copyright (c) 2026 kurogedelic
+
+- Hardware design, shell and documentation (everything outside `tools/`): [CC BY-SA 4.0](LICENSE)
+- Scripts in `tools/`: [MIT](tools/LICENSE)
