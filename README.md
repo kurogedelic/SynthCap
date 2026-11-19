@@ -6,6 +6,8 @@ A MIDI / CV interface "Cap" for the M5Stack CardputerZero. It plugs into the EXT
 |---|---|
 | ![top](docs/render_top.png) | ![bottom](docs/render_bottom.png) |
 
+![perspective](docs/render_persp.png)
+
 **Status: work in progress.** The board has been auto-routed but never built. Nothing here is tested on hardware.
 
 ## Features

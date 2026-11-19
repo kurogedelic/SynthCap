@@ -15338,7 +15338,7 @@
 		)
 	)
 	(gr_text "SynthCap v0.1"
-		(at 104 73.75 0)
+		(at 158.5 70 0)
 		(layer "B.SilkS")
 		(uuid "ba7f42aa-3e1a-42c5-bfd3-101482993876")
 		(effects
